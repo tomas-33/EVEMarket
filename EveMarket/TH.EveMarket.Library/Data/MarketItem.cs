@@ -8,7 +8,7 @@
         public MarketData To { get; set; }
         public decimal TaxPlusFee { get; set; }
         public decimal Profit { get; set; }
-        public int ProfitPercent { get; set; }
+        public decimal ProfitPercent { get; set; }
         public int Margin { get; set; }
         public decimal MedianSellDay { get; set; }
         public decimal AverageSellDay { get; set; }

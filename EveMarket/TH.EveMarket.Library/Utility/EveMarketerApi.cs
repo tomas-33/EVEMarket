@@ -1,20 +1,22 @@
 ﻿namespace TH.EveMarket.Library.Utility
 {
+    using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Net;
     using System.Text;
+    using System.Threading.Tasks;
     using System.Xml;
     using TH.EveMarket.Library.Data;
 
-    public class EveCentralApi
+    class EveMarketerApi
     {
         private string _apiUri;
         private System.Globalization.CultureInfo _enCultureInfo = new System.Globalization.CultureInfo("en-US");
 
-        public EveCentralApi(string apiUri = null)
+        public EveMarketerApi(string apiUri = null)
         {
-            this._apiUri = !string.IsNullOrEmpty(apiUri) ? apiUri : "http://api.eve-central.com/api/marketstat";
+            this._apiUri = !string.IsNullOrEmpty(apiUri) ? apiUri : "https://api.evemarketer.com/ec/marketstat";
         }
 
         public List<MarketData> LoadMarketData(List<Route> routes, List<Product> products)
@@ -41,7 +43,7 @@
         private XmlDocument GetApiData(List<string> typeIds, string system = null, string regionLimit = null)
         {
             // Example
-            // http://api.eve-central.com/api/marketstat?typeid=34&typeid=35&regionlimit=10000002
+            // https://api.evemarketer.com/ec/marketstat?typeid=34&typeid=35&regionlimit=10000002&usesystem=30002659
 
             StringBuilder parameters = new StringBuilder();
 
@@ -78,7 +80,6 @@
                     wc.Proxy = wp;
                 }
 
-                string getpage = wc.DownloadString(this._apiUri);
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 string htmlResult = wc.UploadString(this._apiUri, parameters.ToString());
                 XmlDocument result = new XmlDocument();
@@ -91,7 +92,7 @@
         {
             var marketData = new List<MarketData>();
 
-            var types = data.SelectNodes("//evec_api/marketstat/type");
+            var types = data.SelectNodes("//exec_api/marketstat/type");
 
             foreach (XmlNode type in types)
             {
@@ -110,14 +111,6 @@
                 item.Sell.Min = ParseXmlDecimalValue(type, "//sell/min");
                 item.Sell.StdDev = ParseXmlDecimalValue(type, "//sell/stddev");
                 item.Sell.Median = ParseXmlDecimalValue(type, "//sell/median");
-                item.Sell.Percentile = ParseXmlDecimalValue(type, "//sell/percentile");
-                item.All.Volume = ParseXmlLongValue(type, "//all/volume");
-                item.All.Avg = ParseXmlDecimalValue(type, "//all/avg");
-                item.All.Max = ParseXmlDecimalValue(type, "//all/max");
-                item.All.Min = ParseXmlDecimalValue(type, "//all/min");
-                item.All.StdDev = ParseXmlDecimalValue(type, "//all/stddev");
-                item.All.Median = ParseXmlDecimalValue(type, "//all/median");
-                item.All.Percentile = ParseXmlDecimalValue(type, "//all/percentile");
                 marketData.Add(item);
             }
 

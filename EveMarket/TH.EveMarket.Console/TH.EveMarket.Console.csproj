@@ -49,10 +49,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>48153DAFB441DCC485CDECD4294D42FAF970E327</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6DA6633AF58CBE04DD803E8DCB579AE0C89B156C</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>TH.EveMarket.Console_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>TH.EveMarket.Console_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -76,7 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="TH.EveMarket.Console_TemporaryKey.pfx" />
+    <None Include="TH.EveMarket.Console_1_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">

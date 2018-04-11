@@ -1,9 +1,11 @@
 ﻿namespace TH.EveMarket.Library
 {
+    using System;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Text;
+    using System.Xml.Linq;
     using TH.EveMarket.Library.Data;
     using TH.EveMarket.Library.Utility;
 
@@ -11,7 +13,6 @@
     {
         private decimal _BrokersFee = 0.03M;
         private decimal _transactionTax = 0.02M;
-        private Configuration _config;
 
         private Dictionary<string, long> _typeIds;
         private Dictionary<string, long> _systemIds;
@@ -19,14 +20,12 @@
         private List<Route> _routes;
         private List<Product> _products;
         private List<MarketData> _marketData;
-        private List<MarketItem> _marketItems;
+
+        public List<MarketItem> MarketItems { get; private set; }
 
         public Market()
         {
-            this.LoadConfig();
-            this.LoadData();
         }
-
 
         #region Properties
 
@@ -58,26 +57,26 @@
 
         #endregion // Properties
 
-        public void LoadConfig()
+        public void TestEveOnlineApi()
         {
-            this._config = new Configuration();
-            this._config.AssemblyPath = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
-            this._config.RoutesPath = this._config.AssemblyPath + "\\Routes.txt";
-            this._config.ProductsPath = this._config.AssemblyPath + "\\Products.txt";
-            this._config.SystemIdsPath = this._config.AssemblyPath + "\\SystemIds.txt";
-            this._config.TypeIdsPath = this._config.AssemblyPath + "\\typeids.txt";
+            var api = new EveOnlineApi();
+            System.Console.WriteLine(api.LoadSystemId("Dodixie"));
+        }
 
-            this._config.TypeIdsUri = "http://eve-files.com/chribba/typeid.txt";
-            this._config.ApiUri = "http://api.eve-central.com/api/marketstat";
-
-            this.GetTypeIds();
-            this.GetSystemIds();
+        public void Test()
+        {
+            var marketerApi = new EveMarketerApi();
+            this.LoadData();
+            marketerApi.LoadMarketData(this._routes, this._products);
         }
 
         public void LoadData()
         {
+            this.GetTypeIds();
+            this.GetSystemIds();
+
             // Routes
-            var systemRoutes = Csv.GetCsv(this._config.RoutesPath);
+            var systemRoutes = Csv.GetCsv(Configuration.RoutesPath);
             this._routes = new List<Route>();
             foreach (var item in systemRoutes)
             {
@@ -90,7 +89,7 @@
             }
 
             // Products
-            var products = Csv.GetCsv(this._config.ProductsPath);
+            var products = Csv.GetCsv(Configuration.ProductsPath);
             this._products = new List<Product>();
             foreach (var item in products)
             {
@@ -103,13 +102,13 @@
 
         public void DownloadMarketData()
         {
-            var api = new EveCentralApi(this._config.ApiUri);
+            var api = new EveMarketerApi(Configuration.EveMarketerApiUri);
             this._marketData = api.LoadMarketData(this._routes, this._products);
         }
 
         public void Calculate()
         {
-            this._marketItems = new List<MarketItem>();
+            this.MarketItems = new List<MarketItem>();
             foreach (var route in this._routes)
             {
                 foreach (var product in this._products)
@@ -118,11 +117,11 @@
                     newResult.Route = route;
                     newResult.Product = product;
                     newResult.From = this._marketData.Where(m => m.TypeId == product.Id && m.SystemId == route.FromSystem.Id).First();
-                    newResult.To = this._marketData.Where(m => m.TypeId == product. Id && m.SystemId == route.ToSystem.Id).First();
+                    newResult.To = this._marketData.Where(m => m.TypeId == product.Id && m.SystemId == route.ToSystem.Id).First();
                     newResult.TaxPlusFee = (this._BrokersFee + this._transactionTax) * newResult.From.Sell.Min;
                     newResult.Profit = newResult.From.Sell.Min + newResult.TaxPlusFee - newResult.To.Sell.Min;
-                    //newResult.ProfitPercent = newResult.Profit / (newResult.TaxPlusFee + newResult.To.Sell.Min);
-                    this._marketItems.Add(newResult);
+                    newResult.ProfitPercent = newResult.Profit / (newResult.TaxPlusFee + newResult.To.Sell.Min);
+                    this.MarketItems.Add(newResult);
                 }
             }
         }
@@ -133,7 +132,7 @@
             foreach (var route in this._routes)
             {
                 result.AppendLine($"{route.FromSystem.Name} -> {route.ToSystem.Name}");
-                this._marketItems.Where(r => r.Route == route).ToList().ForEach(r => result.AppendLine($"{r.Product.Name}    {r.From.Sell.Min / 1000000} {r.To.Sell.Min / 1000000} {r.ProfitPercent}"));
+                this.MarketItems.Where(r => r.Route == route).ToList().ForEach(r => result.AppendLine($"{r.Product.Name}    Origin sell: {r.From.Sell.Min} ISK / Destination Sell: {r.To.Sell.Min} ISK / Profit: {r.ProfitPercent.ToString("0.##")}%"));
             }
 
             return result.ToString();
@@ -141,12 +140,12 @@
 
         private void GetTypeIds()
         {
-            TypeIds typeIds = new TypeIds(this._config.TypeIdsUri);
-            this._typeIds = typeIds.Load(this._config.TypeIdsPath);
+            TypeIds typeIds = new TypeIds(Configuration.TypeIdsUri);
+            this._typeIds = typeIds.Load(Configuration.TypeIdsPath);
             if (this._typeIds == null || this._typeIds.Count == 0)
             {
                 this._typeIds = typeIds.DownloadTypeIds();
-                typeIds.Save(this._typeIds, this._config.TypeIdsPath);
+                typeIds.Save(this._typeIds, Configuration.TypeIdsPath);
             }
         }
 
@@ -154,7 +153,7 @@
         {
             this._systemIds = new Dictionary<string, long>();
 
-            var systemIds = Csv.GetCsv(this._config.SystemIdsPath);
+            var systemIds = Csv.GetCsv(Configuration.SystemIdsPath);
 
             foreach (var item in systemIds)
             {
