@@ -120,7 +120,7 @@
                     newResult.To = this._marketData.Where(m => m.TypeId == product.Id && m.SystemId == route.ToSystem.Id).First();
                     newResult.TaxPlusFee = (this._BrokersFee + this._transactionTax) * newResult.From.Sell.Min;
                     newResult.Profit = newResult.From.Sell.Min + newResult.TaxPlusFee - newResult.To.Sell.Min;
-                    newResult.ProfitPercent = newResult.Profit / (newResult.TaxPlusFee + newResult.To.Sell.Min);
+                    newResult.ProfitPercent = (newResult.TaxPlusFee + newResult.To.Sell.Min) != 0 ? newResult.Profit / (newResult.TaxPlusFee + newResult.To.Sell.Min) : 0;
                     this.MarketItems.Add(newResult);
                 }
             }

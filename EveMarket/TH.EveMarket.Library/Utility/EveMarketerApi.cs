@@ -7,6 +7,7 @@
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml;
+    using System.Xml.Linq;
     using TH.EveMarket.Library.Data;
 
     class EveMarketerApi
@@ -40,7 +41,7 @@
             return data;
         }
 
-        private XmlDocument GetApiData(List<string> typeIds, string system = null, string regionLimit = null)
+        private XDocument GetApiData(List<string> typeIds, string system = null, string regionLimit = null)
         {
             // Example
             // https://api.evemarketer.com/ec/marketstat?typeid=34&typeid=35&regionlimit=10000002&usesystem=30002659
@@ -82,49 +83,38 @@
 
                 wc.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
                 string htmlResult = wc.UploadString(this._apiUri, parameters.ToString());
-                XmlDocument result = new XmlDocument();
-                result.LoadXml(htmlResult);
-                return result;
+                return XDocument.Parse(htmlResult);
             }
         }
 
-        private List<MarketData> Parse(XmlDocument data)
+        private List<MarketData> Parse(XDocument data)
         {
             var marketData = new List<MarketData>();
 
-            var types = data.SelectNodes("//exec_api/marketstat/type");
+            var types = data.Root.Element("marketstat").Elements("type");
 
-            foreach (XmlNode type in types)
+            foreach (var type in types)
             {
                 var item = new MarketData();
-                item.TypeId = long.Parse(type.Attributes["id"].Value);
-                item.Buy.Volume = ParseXmlLongValue(type, "//buy/volume");
-                item.Buy.Avg = ParseXmlDecimalValue(type, "//buy/avg");
-                item.Buy.Max = ParseXmlDecimalValue(type, "//buy/max");
-                item.Buy.Min = ParseXmlDecimalValue(type, "//buy/min");
-                item.Buy.StdDev = ParseXmlDecimalValue(type, "//buy/stddev");
-                item.Buy.Median = ParseXmlDecimalValue(type, "//buy/median");
-                item.Sell.Percentile = ParseXmlDecimalValue(type, "//sell/percentile");
-                item.Sell.Volume = ParseXmlLongValue(type, "//sell/volume");
-                item.Sell.Avg = ParseXmlDecimalValue(type, "//sell/avg");
-                item.Sell.Max = ParseXmlDecimalValue(type, "//sell/max");
-                item.Sell.Min = ParseXmlDecimalValue(type, "//sell/min");
-                item.Sell.StdDev = ParseXmlDecimalValue(type, "//sell/stddev");
-                item.Sell.Median = ParseXmlDecimalValue(type, "//sell/median");
+                item.TypeId = long.Parse(type.Attribute("id").Value);
+                item.Sell.Percentile = decimal.Parse(type.Element("buy").Element("percentile").Value, this._enCultureInfo);
+                item.Buy.Volume = long.Parse(type.Element("buy").Element("volume").Value, this._enCultureInfo);
+                item.Buy.Avg = decimal.Parse(type.Element("buy").Element("avg").Value, this._enCultureInfo);
+                item.Buy.Max = decimal.Parse(type.Element("buy").Element("max").Value, this._enCultureInfo);
+                item.Buy.Min = decimal.Parse(type.Element("buy").Element("min").Value, this._enCultureInfo);
+                item.Buy.StdDev = decimal.Parse(type.Element("buy").Element("stddev").Value, this._enCultureInfo);
+                item.Buy.Median = decimal.Parse(type.Element("buy").Element("median").Value, this._enCultureInfo);
+                item.Sell.Percentile = decimal.Parse(type.Element("sell").Element("percentile").Value, this._enCultureInfo);
+                item.Sell.Volume = long.Parse(type.Element("sell").Element("volume").Value, this._enCultureInfo);
+                item.Sell.Avg = decimal.Parse(type.Element("sell").Element("avg").Value, this._enCultureInfo);
+                item.Sell.Max = decimal.Parse(type.Element("sell").Element("max").Value, this._enCultureInfo);
+                item.Sell.Min = decimal.Parse(type.Element("sell").Element("min").Value, this._enCultureInfo);
+                item.Sell.StdDev = decimal.Parse(type.Element("sell").Element("stddev").Value, this._enCultureInfo);
+                item.Sell.Median = decimal.Parse(type.Element("sell").Element("median").Value, this._enCultureInfo);
                 marketData.Add(item);
             }
 
             return marketData;
-        }
-
-        private decimal ParseXmlDecimalValue(XmlNode type, string node)
-        {
-            return decimal.Parse(string.IsNullOrEmpty(type.SelectSingleNode(node).InnerText) ? "0.0" : type.SelectSingleNode(node).InnerText, this._enCultureInfo);
-        }
-
-        private long ParseXmlLongValue(XmlNode type, string node)
-        {
-            return long.Parse(string.IsNullOrEmpty(type.SelectSingleNode(node).InnerText) ? "0.0" : type.SelectSingleNode(node).InnerText);
         }
 
         private List<string> GetDistinctSystemIds(List<Route> routes)
