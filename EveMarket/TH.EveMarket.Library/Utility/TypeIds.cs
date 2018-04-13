@@ -8,7 +8,6 @@
     public class TypeIds
     {
         private string _uri;
-        public bool UseDefaultProxy { get; set; }
 
         public TypeIds(string uri)
         {
@@ -22,7 +21,7 @@
 
             using (WebClient wc = new WebClient())
             {
-                if (UseDefaultProxy)
+                if (Configuration.UseDefaultProxy)
                 {
                     IWebProxy wp = WebRequest.DefaultWebProxy;
                     wp.Credentials = CredentialCache.DefaultCredentials;

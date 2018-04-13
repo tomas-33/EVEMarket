@@ -23,7 +23,17 @@
                             <RowDefinition Height="30" />
                             <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
-                        <Button Name="DownloadButton" Margin="3" Width="100" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Download" Grid.Row="0" Click="DownloadButton_Click"/>
+
+                        <Button Name="UpdateButton" Margin="3" Width="100" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Update" Grid.Row="0" Click="UpdateButton_Click"/>
+
+                        <ComboBox Name="RoutesComboBox" Margin="3" Width="200" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" SelectionChanged="RoutesComboBox_SelectionChanged">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                        <TextBlock Text="{Binding Description}" />
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
                         <DataGrid Grid.Row="1" Name="MarketDataDataGrid" AutoGenerateColumns="False" >
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Product" Binding="{Binding Product.Name}" />

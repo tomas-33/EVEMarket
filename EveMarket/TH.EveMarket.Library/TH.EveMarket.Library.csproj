@@ -45,7 +45,7 @@
     <Compile Include="Data\Product.cs" />
     <Compile Include="Data\MarketItem.cs" />
     <Compile Include="Data\Route.cs" />
-    <Compile Include="Data\System.cs" />
+    <Compile Include="Data\SolarSystem.cs" />
     <Compile Include="Market.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Csv.cs" />

@@ -13,7 +13,6 @@
     {
         private decimal _BrokersFee = 0.03M;
         private decimal _transactionTax = 0.02M;
-
         private Dictionary<string, long> _typeIds;
         private Dictionary<string, long> _systemIds;
         private System.Globalization.CultureInfo _enCultureInfo = new System.Globalization.CultureInfo("en-US");
@@ -21,13 +20,9 @@
         private List<Product> _products;
         private List<MarketData> _marketData;
 
-        public List<MarketItem> MarketItems { get; private set; }
-
-        public Market()
-        {
-        }
-
         #region Properties
+
+        public List<MarketItem> MarketItems { get; private set; }
 
         public Dictionary<string, long> TypeIds
         {
@@ -48,7 +43,7 @@
             {
                 if (this._systemIds == null)
                 {
-                    this.GetSystemIds();
+                    this._systemIds = SolarSystem.LoadFromCsv(Configuration.SystemIdsPath);
                 }
 
                 return this._systemIds;
@@ -73,37 +68,25 @@
         public void LoadData()
         {
             this.GetTypeIds();
-            this.GetSystemIds();
-
-            // Routes
-            var systemRoutes = Csv.GetCsv(Configuration.RoutesPath);
-            this._routes = new List<Route>();
-            foreach (var item in systemRoutes)
-            {
-                var newRoute = new Route();
-                newRoute.FromSystem.Name = item[0];
-                newRoute.FromSystem.Id = SystemIds[item[0]];
-                newRoute.ToSystem.Name = item[1];
-                newRoute.ToSystem.Id = SystemIds[item[1]];
-                this._routes.Add(newRoute);
-            }
-
-            // Products
-            var products = Csv.GetCsv(Configuration.ProductsPath);
-            this._products = new List<Product>();
-            foreach (var item in products)
-            {
-                var newProduct = new Product();
-                newProduct.Name = item[0];
-                newProduct.Id = TypeIds[item[0]];
-                this._products.Add(newProduct);
-            }
+            this._systemIds = SolarSystem.LoadFromCsv(Configuration.SystemIdsPath);
+            this._routes = Route.LoadFromCsv(Configuration.RoutesPath, this._systemIds);
+            this._products = Product.LoadFromCsv(Configuration.ProductsPath, this._typeIds);
+            this.MarketItems = MarketItem.Load(this._routes, this._products);
         }
 
         public void DownloadMarketData()
         {
             var api = new EveMarketerApi(Configuration.EveMarketerApiUri);
             this._marketData = api.LoadMarketData(this._routes, this._products);
+
+            foreach (MarketItem item in this.MarketItems)
+            {
+                item.From = this._marketData.Where(m => m.TypeId == item.Product.Id && m.SystemId == item.Route.FromSystem.Id).First();
+                item.To = this._marketData.Where(m => m.TypeId == item.Product.Id && m.SystemId == item.Route.ToSystem.Id).First();
+                item.TaxPlusFee = (this._BrokersFee + this._transactionTax) * item.From.Sell.Min;
+                item.Profit = item.From.Sell.Min + item.TaxPlusFee - item.To.Sell.Min;
+                item.ProfitPercent = (item.TaxPlusFee + item.To.Sell.Min) != 0 ? item.Profit / (item.TaxPlusFee + item.To.Sell.Min) : 0;
+            }
         }
 
         public void Calculate()
@@ -146,18 +129,6 @@
             {
                 this._typeIds = typeIds.DownloadTypeIds();
                 typeIds.Save(this._typeIds, Configuration.TypeIdsPath);
-            }
-        }
-
-        private void GetSystemIds()
-        {
-            this._systemIds = new Dictionary<string, long>();
-
-            var systemIds = Csv.GetCsv(Configuration.SystemIdsPath);
-
-            foreach (var item in systemIds)
-            {
-                this._systemIds.Add(item[0], long.Parse(item[1]));
             }
         }
     }

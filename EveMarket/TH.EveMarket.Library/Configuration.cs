@@ -1,13 +1,14 @@
-﻿using System.IO;
-using System.Xml.Linq;
-
-namespace TH.EveMarket.Library
+﻿namespace TH.EveMarket.Library
 {
+    using System.IO;
+    using System.Xml.Linq;
+
     public static class Configuration
     {
         public static string AssemblyPath { get; } = Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location);
         public static string EveCentralApiUri { get; set; } = string.Empty;
         public static string EveMarketerApiUri { get; set; } = string.Empty;
+        public static string EveOnlineApiUri { get; set; } = string.Empty;
         public static string TypeIdsUri { get; set; } = string.Empty;
         public static string RoutesPath { get; set; } = string.Empty;
         public static string ProductsPath { get; set; } = string.Empty;
@@ -41,6 +42,7 @@ namespace TH.EveMarket.Library
             Configuration.TypeIdsUri = xml.Root.Element("typeIds").Attribute("uri").Value;
             Configuration.EveCentralApiUri = xml.Root.Element("eveCentralApi").Attribute("uri").Value;
             Configuration.EveMarketerApiUri = xml.Root.Element("eveMarketerApi").Attribute("uri").Value;
+            Configuration.EveOnlineApiUri = xml.Root.Element("eveOnlineApi").Attribute("uri").Value;
             Configuration.UseDefaultProxy = bool.Parse(xml.Root.Element("useDefaultProxy").Attribute("value").Value);
         }
 
@@ -57,6 +59,7 @@ namespace TH.EveMarket.Library
                         new XElement("typeIds", new XAttribute[] { new XAttribute("path", Configuration.AssemblyPath + "\\typeids.txt"), new XAttribute("uri", "http://eve-files.com/chribba/typeid.txt") }),
                         new XElement("eveCentralApi", new XAttribute("uri", "http://api.eve-central.com/api/marketstat")),
                         new XElement("eveMarketerApi", new XAttribute("uri", "https://api.evemarketer.com/ec/marketstat")),
+                        new XElement("eveOnlineApi", new XAttribute("uri", "https://api.eveonline.com/eve/CharacterID.xml.aspx")),
                         new XElement("useDefaultProxy", new XAttribute("value", false.ToString()))
                     )
                 );
