@@ -22,28 +22,12 @@
             foreach (var item in systemRoutes)
             {
                 var newRoute = new Route();
-                newRoute.FromSystem.Name = item[0];
-                newRoute.FromSystem.Id = GetSystemId(item[0], systemIds);
-                newRoute.ToSystem.Name = item[1];
-                newRoute.ToSystem.Id = GetSystemId(item[1], systemIds);
+                newRoute.FromSystem = SolarSystem.CreateSolarSystem(item[0], ref systemIds);
+                newRoute.ToSystem = SolarSystem.CreateSolarSystem(item[1], ref systemIds);
                 routes.Add(newRoute);
             }
 
             return routes;
-        }
-
-        private static long GetSystemId(string systemName, Dictionary<string, long> systemIds)
-        {
-            long systemId;
-            var isSystemInList = systemIds.TryGetValue(systemName, out systemId);
-            if (isSystemInList)
-            {
-                return systemId;
-            }
-            else
-            {
-                return SolarSystem.DownloadSystemId(systemName);
-            }
         }
     }
 }

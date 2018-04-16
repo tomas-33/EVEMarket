@@ -7,10 +7,26 @@
         public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
-        public static long DownloadSystemId(string systemName)
+        public SolarSystem()
         {
-            var eveOnlineApi = new EveOnlineApi(Configuration.EveOnlineApiUri);
-            return eveOnlineApi.LoadSystemId(systemName);
+        }
+
+        public SolarSystem(long id, string name)
+        {
+            this.Id = id;
+            this.Name = name;
+        }
+
+        public static SolarSystem CreateSolarSystem(string name, ref Dictionary<string, long> systemIds)
+        {
+            long id;
+            if (!systemIds.TryGetValue(name, out id))
+            {
+                id = DownloadSystemId(name);
+                systemIds.Add(name, id);
+            }
+
+            return new SolarSystem(id, name);
         }
 
         public static Dictionary<string, long> LoadFromCsv(string path)
@@ -24,6 +40,12 @@
             }
 
             return systemIds;
+        }
+
+        private static long DownloadSystemId(string systemName)
+        {
+            var eveOnlineApi = new EveOnlineApi(Configuration.AppConfig.EveOnlineApiUri);
+            return eveOnlineApi.LoadSystemId(systemName);
         }
     }
 }

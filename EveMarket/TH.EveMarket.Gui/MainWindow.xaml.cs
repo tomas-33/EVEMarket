@@ -27,25 +27,30 @@
         public MainWindow()
         {
             InitializeComponent();
-
             this._market = new Market();
-            this._market.LoadData();
 
-            var routes = this._market.MarketItems.Select(i => i.Route).Distinct();
-            this.RoutesComboBox.ItemsSource = routes;
+            this.RoutesComboBox.ItemsSource = this._market.Routes;
 
-            this.MarketDataDataGrid.ItemsSource = this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.Items.CurrentItem as Route));
+            this.MarketDataDataGrid.ItemsSource = this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.SelectedItem as Route));
+            this.RoutesComboBox.SelectedIndex = 0;
+
+            this.ProductsDataGrid.ItemsSource = this._market.Products;
+            this.RoutesDataGrid.ItemsSource = this._market.Routes;
         }
 
         private void UpdateButton_Click(object sender, RoutedEventArgs e)
         {
             this._market.DownloadMarketData();
-            this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.Items.CurrentItem as Route));
+        }
+
+        private void AddProductButton_Click(object sender, RoutedEventArgs e)
+        {
+             this._market.Products.Add(Product.CreateProduct(this.AddProductTextBox.Text));
         }
 
         private void RoutesComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            this.MarketDataDataGrid.ItemsSource = this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.Items.CurrentItem as Route));
+            this.MarketDataDataGrid.ItemsSource = this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.SelectedItem as Route));
         }
     }
 }

@@ -11,6 +11,7 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Menu">
+                    <MenuItem Header="_Save" />
                     <MenuItem Header="_Preferences" />
                     <Separator />
                     <MenuItem Header="_Exit" />
@@ -29,25 +30,65 @@
                         <ComboBox Name="RoutesComboBox" Margin="3" Width="200" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" SelectionChanged="RoutesComboBox_SelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                        <TextBlock Text="{Binding Description}" />
+                                    <TextBlock Text="{Binding Description}" />
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <DataGrid Grid.Row="1" Name="MarketDataDataGrid" AutoGenerateColumns="False" >
+                        <DataGrid Grid.Row="1" Name="MarketDataDataGrid" AutoGenerateColumns="False" IsReadOnly="True" >
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="Product" Binding="{Binding Product.Name}" />
-                                <DataGridTextColumn Header="Source Sell" Binding="{Binding From.Sell.Min}" />
-                                <DataGridTextColumn Header="Destination Sell" Binding="{Binding To.Sell.Min}" />
-                                <DataGridTextColumn Header="Profit" Binding="{Binding ProfitPercent, StringFormat={}{0:n2}}" />
+                                <DataGridTextColumn Header="Product" Width="100" Binding="{Binding Product.Name}" />
+                                <DataGridTextColumn Header="Source Sell" Width="100" Binding="{Binding From.Sell.Min, StringFormat=N}" />
+                                <DataGridTextColumn Header="Destination Sell" Width="100" Binding="{Binding To.Sell.Min, StringFormat=N}" />
+                                <DataGridTextColumn Header="Profit %" Width="52" Binding="{Binding ProfitPercent, StringFormat={}{0:n2}}" />
+                                <DataGridTextColumn Header="Profit" Width="100" Binding="{Binding Profit, StringFormat=N}" />
                             </DataGrid.Columns>
                         </DataGrid>
 
 
                     </Grid>
                 </TabItem>
+                
+                <TabItem Header="Products">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Button Name="AddProductButton" Margin="3" Width="100" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Add" Grid.Row="0" Click="AddProductButton_Click"/>
+                            <TextBox Name="AddProductTextBox" Margin="3" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        </StackPanel>
 
 
+                        <DataGrid Grid.Row="1" Name="ProductsDataGrid" AutoGenerateColumns="False" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+
+                <TabItem Header="Routes">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <!--<StackPanel Grid.Row="0" Orientation="Horizontal">
+                            <Button Name="AddProductButton" Margin="3" Width="100" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Add" Grid.Row="0" Click="AddProductButton_Click"/>
+                            <TextBox Name="AddProductTextBox" Margin="3" Width="300" VerticalAlignment="Center" HorizontalAlignment="Left" />
+                        </StackPanel>-->
+
+
+                        <DataGrid Grid.Row="1" Name="RoutesDataGrid" AutoGenerateColumns="False" >
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Name" Width="200" Binding="{Binding Description}" />
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </TabItem>
+                
             </TabControl>
         </DockPanel>
     </Grid>

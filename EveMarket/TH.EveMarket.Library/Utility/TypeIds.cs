@@ -5,30 +5,23 @@
     using System.IO;
     using System.Net;
 
-    public class TypeIds
+    public static class TypeIds
     {
-        private string _uri;
-
-        public TypeIds(string uri)
-        {
-            this._uri = !string.IsNullOrEmpty(uri) ? uri : "http://eve-files.com/chribba/typeid.txt";
-        }
-
-        public Dictionary<string, long> DownloadTypeIds()
+        public static Dictionary<string, long> DownloadTypeIds(string uri)
         {
             Dictionary<string, long> result = new Dictionary<string, long>();
             string getpage;
 
             using (WebClient wc = new WebClient())
             {
-                if (Configuration.UseDefaultProxy)
+                if (Configuration.AppConfig.UseDefaultProxy)
                 {
                     IWebProxy wp = WebRequest.DefaultWebProxy;
                     wp.Credentials = CredentialCache.DefaultCredentials;
                     wc.Proxy = wp;
                 }
-                
-                getpage = wc.DownloadString(_uri);
+
+                getpage = wc.DownloadString(uri);
             }
 
             string[] list = getpage.Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -52,7 +45,7 @@
             return result;
         }
 
-        public void Save(Dictionary<string, long> typeIds, string path)
+        public static void Save(Dictionary<string, long> typeIds, string path)
         {
             List<string[]> list = new List<string[]>();
             foreach (var item in typeIds)
@@ -63,7 +56,7 @@
             Csv.SaveCsv(list, path);
         }
 
-        public Dictionary<string, long> Load(string path)
+        public static Dictionary<string, long> Load(string path)
         {
             Dictionary<string, long> typeIds = new Dictionary<string, long>();
 
@@ -75,6 +68,19 @@
             foreach (var item in Csv.GetCsv(path))
             {
                 typeIds.Add(item[0], long.Parse(item[1]));
+            }
+
+            return typeIds;
+        }
+
+        public static Dictionary<string, long> GetTypeIds()
+        {
+            var typeIds = new Dictionary<string, long>();
+            typeIds = Utility.TypeIds.Load(Path.Combine(Configuration.AppConfig.ActualConfigFolder, Configuration.AppConfig.TypeIdsFileName));
+            if (typeIds == null || typeIds.Count == 0)
+            {
+                typeIds = Utility.TypeIds.DownloadTypeIds(Configuration.AppConfig.TypeIdsUri);
+                Utility.TypeIds.Save(typeIds, Configuration.AppConfig.TypeIdsFileName);
             }
 
             return typeIds;

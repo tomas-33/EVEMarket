@@ -28,7 +28,7 @@
 
             using (WebClient wc = new WebClient())
             {
-                if (Configuration.UseDefaultProxy)
+                if (Configuration.AppConfig.UseDefaultProxy)
                 {
                     IWebProxy wp = WebRequest.DefaultWebProxy;
                     wp.Credentials = CredentialCache.DefaultCredentials;
