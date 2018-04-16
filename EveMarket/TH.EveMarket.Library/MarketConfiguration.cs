@@ -19,50 +19,6 @@
 
         [NonSerialized]
         private Dictionary<string, long> _systemIds = new Dictionary<string, long>();
-        public Dictionary<string, long> SystemIds { get { return this._systemIds; } set { this._systemIds = value; } }
-
-        //static MarketConfiguration()
-        //{
-        //    LoadConfig();
-        //}
-
-        //public static void LoadConfig()
-        //{
-        //    this.SystemIds = SolarSystem.LoadFromCsv(Path.Combine(Configuration.AppConfigAppConfig.ActualConfigFolder, Configuration.AppConfigAppConfig.SystemIdsFileName));
-        //    this.Type GetTypeIds();
-
-        //    XDocument xml = new XDocument();
-
-        //    try
-        //    {
-        //        xml = XDocument.Load(Configuration.AppConfigAssemblyPath + "\\marketConfig.xml");
-        //    }
-        //    catch (FileNotFoundException)
-        //    {
-        //        xml = MarketConfiguration.AppConfigCreateDefaultConfig();
-        //        xml.Save(Configuration.AppConfigAssemblyPath + "\\marketConfig.xml");
-        //    }
-
-        //    MarketConfiguration.AppConfigBrokersFeePercent = decimal.Parse(xml.Root.Element("brokersFee").Attribute("percentValue").Value, Configuration.AppConfigEnCultureInfo);
-        //    MarketConfiguration.AppConfigTransactionTaxPercent = decimal.Parse(xml.Root.Element("transactionTax").Attribute("percentValue").Value, Configuration.AppConfigEnCultureInfo);
-
-        //}
-
-        //public static XDocument CreateDefaultConfig()
-        //{
-        //    XDocument xml = new XDocument
-        //        (
-        //        new XElement
-        //            (
-        //            "config",
-        //                new XElement("brokersFee", new XAttribute("percentValue", 0.03M)),
-        //                new XElement("transactionTax", new XAttribute("percentValue", 0.02M))
-        //            )
-        //        );
-
-        //    return xml;
-        //}
-
-        
+        public Dictionary<string, long> SystemIds { get { return this._systemIds; } set { this._systemIds = value; } }       
     }
 }

@@ -24,7 +24,7 @@
         public Market()
         {
             this.LoadData();
-
+            
             Products.CollectionChanged += ProductsChanged;
         }
 
