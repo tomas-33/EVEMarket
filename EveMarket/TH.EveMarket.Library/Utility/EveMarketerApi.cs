@@ -10,7 +10,7 @@
     using System.Xml.Linq;
     using TH.EveMarket.Library.Data;
 
-    class EveMarketerApi
+    public static class EveMarketerApi
     {
         private string _apiUri;
         private System.Globalization.CultureInfo _enCultureInfo = new System.Globalization.CultureInfo("en-US");
@@ -20,7 +20,7 @@
             this._apiUri = !string.IsNullOrEmpty(apiUri) ? apiUri : "https://api.evemarketer.com/ec/marketstat";
         }
 
-        public List<MarketData> LoadMarketData(List<Route> routes, List<Product> products)
+        public static List<MarketData> LoadMarketData(List<Route> routes, List<Product> products, string apiUri = null)
         {
             var result = new List<MarketData>();
             products = products.Distinct().ToList();
@@ -33,7 +33,7 @@
             return result;
         }
 
-        private List<MarketData> GetMarketData(List<string> typeIds, string systemId)
+        private static List<MarketData> GetMarketData(List<string> typeIds, string systemId)
         {
             var system = long.Parse(systemId);
             var data = this.Parse(this.GetApiData(typeIds, systemId));
@@ -41,7 +41,7 @@
             return data;
         }
 
-        private XDocument GetApiData(List<string> typeIds, string system = null, string regionLimit = null)
+        private static XDocument GetApiData(List<string> typeIds, string system = null, string regionLimit = null)
         {
             // Example
             // https://api.evemarketer.com/ec/marketstat?typeid=34&typeid=35&regionlimit=10000002&usesystem=30002659
@@ -87,7 +87,7 @@
             }
         }
 
-        private List<MarketData> Parse(XDocument data)
+        private static List<MarketData> Parse(XDocument data)
         {
             var marketData = new List<MarketData>();
 
@@ -117,7 +117,7 @@
             return marketData;
         }
 
-        private List<string> GetDistinctSystemIds(List<Route> routes)
+        private static List<string> GetDistinctSystemIds(List<Route> routes)
         {
             var distinctSystems = new List<string>();
             foreach (var item in routes)

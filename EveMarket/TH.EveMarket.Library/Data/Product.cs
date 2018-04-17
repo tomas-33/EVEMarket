@@ -33,16 +33,31 @@
 
         public override bool Equals(object obj)
         {
+            if (obj == null || !(obj is Product) || (obj as Product).Name == null)
+            {
+                return false;
+            }
+
             return (obj as Product).Id == this.Id && (obj as Product).Name == this.Name;
         }
 
         public static bool operator ==(Product obj1, Product obj2)
         {
+            if (obj1 == null || obj2 == null)
+            {
+                return false;
+            }
+
             return obj1.Id == obj2.Id && obj1.Name == obj2.Name;
         }
 
         public static bool operator !=(Product obj1, Product obj2)
         {
+            if (obj1 == null || obj2 == null)
+            {
+                return false;
+            }
+
             return !(obj1.Id == obj2.Id && obj1.Name == obj2.Name);
         }
 

@@ -51,7 +51,7 @@
     <Compile Include="Data\Route.cs" />
     <Compile Include="Data\SolarSystem.cs" />
     <Compile Include="Market.cs" />
-    <Compile Include="MarketConfiguration.cs" />
+    <Compile Include="Data\MarketConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\Convert.cs" />
     <Compile Include="Utility\Csv.cs" />

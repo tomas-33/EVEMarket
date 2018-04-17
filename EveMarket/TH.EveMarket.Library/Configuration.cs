@@ -2,14 +2,9 @@
 {
     using System;
     using System.IO;
-    using System.Reflection;
-    using System.Runtime.Serialization.Formatters.Soap;
-    using System.Xml.Linq;
-    using System.Xml.Serialization;
     using TH.EveMarket.Library.Data;
     using TH.EveMarket.Library.Utility;
 
-    [Serializable]
     public static class Configuration
     {
         public static AppConfig AppConfig { get; set; } = new AppConfig();

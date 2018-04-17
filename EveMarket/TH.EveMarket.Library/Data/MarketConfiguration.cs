@@ -1,4 +1,4 @@
-﻿namespace TH.EveMarket.Library
+﻿namespace TH.EveMarket.Library.Data
 {
     using System;
     using System.Collections.Generic;
