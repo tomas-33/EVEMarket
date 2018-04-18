@@ -9,141 +9,144 @@
     public class MarketItem : BaseINotifyPropertyChanged
     {
         private Route _route = new Route();
+        private Product _product = new Product();
+        private MarketData _from = new MarketData();
+        private MarketData _to = new MarketData();
+        private decimal _tax;
+        private decimal _fee;
+        private decimal _profit;
+        private decimal _profitPercent;
+        private int _margin;
+        private decimal _medianSellDay;
+        private decimal _averageSellDay;
+        private string _note = string.Empty;
+
+        #region Properties
         public Route Route
         {
             get { return this._route; }
             set
             {
                 this._route = value;
-                OnPropertyChanged(GetPropertyName(() => this.Route));
+                OnPropertyChanged(nameof(this.Route));
             }
         }
 
-        private Product _product = new Product();
         public Product Product
         {
             get { return this._product; }
             set
             {
                 this._product = value;
-                OnPropertyChanged(GetPropertyName(() => this.Product));
+                OnPropertyChanged(nameof(this.Product));
             }
         }
 
-        private MarketData _from = new MarketData();
         public MarketData From
         {
             get { return this._from; }
             set
             {
                 this._from = value;
-                OnPropertyChanged(GetPropertyName(() => this.From));
+                OnPropertyChanged(nameof(this.From));
             }
         }
 
-        private MarketData _to = new MarketData();
         public MarketData To
         {
             get { return this._to; }
             set
             {
                 this._to = value;
-                OnPropertyChanged(GetPropertyName(() => this.To));
+                OnPropertyChanged(nameof(this.To));
             }
         }
 
-        private decimal _tax;
         public decimal Tax
         {
             get { return _tax; }
             set
             {
                 _tax = value;
-                OnPropertyChanged(GetPropertyName(() => this.Tax));
-                OnPropertyChanged(GetPropertyName(() => this.TaxPlusFee));
+                OnPropertyChanged(nameof(this.Tax));
+                OnPropertyChanged(nameof(this.TaxPlusFee));
             }
         }
 
-        private decimal _fee;
         public decimal Fee
         {
             get { return _fee; }
             set
             {
                 _fee = value;
-                OnPropertyChanged(GetPropertyName(() => this.Fee));
-                OnPropertyChanged(GetPropertyName(() => this.TaxPlusFee));
+                OnPropertyChanged(nameof(this.Fee));
+                OnPropertyChanged(nameof(this.TaxPlusFee));
             }
         }
 
+        public decimal TaxPlusFee => this._tax + this._fee;
 
-        public decimal TaxPlusFee { get { return this._tax + this._fee; } }
-
-        private decimal _profit;
         public decimal Profit
         {
             get { return this._profit; }
             set
             {
                 this._profit = value;
-                OnPropertyChanged(GetPropertyName(() => this.Profit));
+                OnPropertyChanged(nameof(this.Profit));
             }
         }
 
-        private decimal _profitPercent;
         public decimal ProfitPercent
         {
             get { return this._profitPercent; }
             set
             {
                 this._profitPercent = value;
-                OnPropertyChanged(GetPropertyName(() => this.ProfitPercent));
+                OnPropertyChanged(nameof(this.ProfitPercent));
             }
         }
 
-        private int _margin;
         public int Margin
         {
             get { return this._margin; }
             set
             {
                 this._margin = value;
-                OnPropertyChanged(GetPropertyName(() => this.Margin));
+                OnPropertyChanged(nameof(this.Margin));
             }
         }
 
-        private decimal _medianSellDay;
         public decimal MedianSellDay
         {
             get { return this._medianSellDay; }
             set
             {
                 this._medianSellDay = value;
-                OnPropertyChanged(GetPropertyName(() => this.MedianSellDay));
+                OnPropertyChanged(nameof(this.MedianSellDay));
             }
         }
 
-        private decimal _averageSellDay;
         public decimal AverageSellDay
         {
             get { return this._averageSellDay; }
             set
             {
                 this._averageSellDay = value;
-                OnPropertyChanged(GetPropertyName(() => this.AverageSellDay));
+                OnPropertyChanged(nameof(AverageSellDay));
             }
         }
 
-        private string _note = string.Empty;
         public string Note
         {
             get { return this._note; }
             set
             {
                 this._note = value;
-                OnPropertyChanged(GetPropertyName(() => this.Note));
+                OnPropertyChanged(nameof(this.Note));
             }
         }
+
+        #endregion // Properties
 
         public static List<MarketItem> Load(List<Route> routes, List<Product> products)
         {

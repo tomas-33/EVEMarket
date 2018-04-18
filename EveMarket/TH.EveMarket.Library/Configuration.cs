@@ -12,7 +12,7 @@
 
         static Configuration()
         {
-            Configuration.LoadConfig();
+            LoadConfig();
         }
 
         public static void LoadConfig()
@@ -22,21 +22,31 @@
 
             if (File.Exists(exePath))
             {
-                AppConfig = Files<AppConfig>.Load(exePath);
+                AppConfig = Files<AppConfig>.LoadXml(exePath);
                 AppConfig.ActualConfigFolder = Path.GetDirectoryName(exePath);
             }
-            else if(File.Exists(appDataPath))
+            else if (File.Exists(appDataPath))
             {
-                AppConfig = Files<AppConfig>.Load(appDataPath);
+                AppConfig = Files<AppConfig>.LoadXml(appDataPath);
                 AppConfig.ActualConfigFolder = Path.GetDirectoryName(appDataPath);
             }
             else
             {
-                Files<AppConfig>.Save(exePath, AppConfig);
+                Files<AppConfig>.SaveXml(exePath, AppConfig);
                 AppConfig.ActualConfigFolder = Path.GetDirectoryName(exePath);
             }
 
-            MarketConfiguration.SystemIds = SolarSystem.LoadFromCsv(Path.Combine(Configuration.AppConfig.ActualConfigFolder, Configuration.AppConfig.SystemIdsFileName));
+            var marketConfigPath = Path.Combine(AppConfig.ActualConfigFolder, "MarketConfig.xml");
+            if (File.Exists(marketConfigPath))
+            {
+                Files<MarketConfiguration>.LoadXml(marketConfigPath);
+            }
+            else
+            {
+                Files<MarketConfiguration>.SaveXml(marketConfigPath, MarketConfiguration);
+            }
+
+            MarketConfiguration.SystemIds = SolarSystem.LoadFromCsv(Path.Combine(AppConfig.ActualConfigFolder, AppConfig.SystemIdsFileName));
             MarketConfiguration.TypeIds = TypeIds.GetTypeIds();
         }
 

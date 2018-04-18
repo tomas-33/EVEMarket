@@ -43,8 +43,7 @@
 
         public void DownloadMarketData()
         {
-            var api = new EveMarketerApi(Configuration.AppConfig.EveMarketerApiUri);
-            var marketData = api.LoadMarketData(this.Routes.ToList(), this.Products.ToList());
+            var marketData = EveMarketerApi.LoadMarketData(this.Routes.ToList(), this.Products.ToList(), Configuration.AppConfig.EveMarketerApiUri);
             MarketItem.LoadMarketData(this.MarketItems, marketData);
         }
 

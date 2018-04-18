@@ -10,7 +10,7 @@
 
     public static class Files<T>
     {
-        public static T Load(string path)
+        public static T LoadXml(string path)
         {
             var xs = new XmlSerializer(typeof(T));
             T result;
@@ -22,7 +22,7 @@
             return result;
         }
 
-        public static void Save(string path, T instanceToSave)
+        public static void SaveXml(string path, T instanceToSave)
         {
             var xs = new XmlSerializer(typeof(T));
             using (Stream s = File.Open(path, FileMode.Create))

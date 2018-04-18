@@ -76,11 +76,11 @@
         public static Dictionary<string, long> GetTypeIds()
         {
             var typeIds = new Dictionary<string, long>();
-            typeIds = Utility.TypeIds.Load(Path.Combine(Configuration.AppConfig.ActualConfigFolder, Configuration.AppConfig.TypeIdsFileName));
+            typeIds = Load(Path.Combine(Configuration.AppConfig.ActualConfigFolder, Configuration.AppConfig.TypeIdsFileName));
             if (typeIds == null || typeIds.Count == 0)
             {
-                typeIds = Utility.TypeIds.DownloadTypeIds(Configuration.AppConfig.TypeIdsUri);
-                Utility.TypeIds.Save(typeIds, Configuration.AppConfig.TypeIdsFileName);
+                typeIds = DownloadTypeIds(Configuration.AppConfig.TypeIdsUri);
+                Save(typeIds, Configuration.AppConfig.TypeIdsFileName);
             }
 
             return typeIds;
