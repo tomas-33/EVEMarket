@@ -1,8 +1,10 @@
 ﻿namespace TH.EveMarket.Library.Data
 {
+    using System;
     using System.Collections.Generic;
     using TH.EveMarket.Library.Utility;
 
+    [Serializable]
     public class Route
     {
         public SolarSystem FromSystem { get; set; } = new SolarSystem();
@@ -28,6 +30,19 @@
             }
 
             return routes;
+        }
+
+        public static void SaveToCsv(string path, List<Route> routes)
+        {
+            var routesToSave = new List<string[]>();
+            
+            foreach (var item in routes)
+            {
+                var route = new string[] { item.FromSystem.Name, item.ToSystem.Name };
+                routesToSave.Add(route);
+            }
+
+            Csv.SaveCsv(routesToSave, path);
         }
     }
 }

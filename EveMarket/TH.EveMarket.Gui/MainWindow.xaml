@@ -11,7 +11,8 @@
         <DockPanel>
             <Menu DockPanel.Dock="Top">
                 <MenuItem Header="_Menu">
-                    <MenuItem Header="_Save" />
+                    <MenuItem Header="_Save" Click="SaveMenuItem_Click" />
+                    <MenuItem Header="_Load" Click="LoadMenuItem_Click" />
                     <MenuItem Header="_Preferences" />
                     <Separator />
                     <MenuItem Header="_Exit" />
@@ -23,11 +24,12 @@
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30" />
                             <RowDefinition Height="*" />
+                            <RowDefinition Height="20" />
                         </Grid.RowDefinitions>
 
                         <Button Name="UpdateButton" Margin="3" Width="100" VerticalAlignment="Center" HorizontalAlignment="Left" Content="Update" Grid.Row="0" Click="UpdateButton_Click"/>
 
-                        <ComboBox Name="RoutesComboBox" Margin="3" Width="200" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" SelectionChanged="RoutesComboBox_SelectionChanged">
+                        <ComboBox Name="RoutesComboBox" Margin="3" Width="200" VerticalAlignment="Center" HorizontalAlignment="Right" Grid.Row="0" IsReadOnly="True" SelectionChanged="RoutesComboBox_SelectionChanged">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
                                     <TextBlock Text="{Binding Description}" />
@@ -44,6 +46,12 @@
                                 <DataGridTextColumn Header="Profit" Width="100" Binding="{Binding Profit, StringFormat=N}" />
                             </DataGrid.Columns>
                         </DataGrid>
+                        
+                        <StatusBar Grid.Row="2">
+                            <StatusBarItem>
+                                <TextBlock Name="LastUpdatedTextBlock" Text="{Binding LastUpdated}" />
+                            </StatusBarItem>
+                        </StatusBar>
 
 
                     </Grid>

@@ -15,23 +15,24 @@
     {
         #region Properties
 
-        public MarketItems MarketItems { get; private set; }
-        public ObservableCollection<Product> Products { get; private set; }
-        public ObservableCollection<Route> Routes { get; private set; }
+        public MarketItems MarketItems { get; private set; } = new MarketItems();
+        public ObservableCollection<Product> Products { get; private set; } = new ObservableCollection<Product>();
+        public ObservableCollection<Route> Routes { get; private set; } = new ObservableCollection<Route>();
+
+        public Dictionary<string, List<string>> ProductsFilterList { get; set; }
 
         #endregion // Properties
 
         public Market()
         {
-            this.LoadData();
-            
-            Products.CollectionChanged += ProductsChanged;
+            this.Products.CollectionChanged += ProductsChanged;
         }
 
         public void LoadData()
         {
-            this.Routes = Convert<Route>.ListToObservableCollection(Route.LoadFromCsv(Configuration.AppConfig.RoutesFileName, Configuration.MarketConfiguration.SystemIds));
-            this.Products = Convert<Product>.ListToObservableCollection(Product.LoadFromCsv(Configuration.AppConfig.ProductsFileName, Configuration.MarketConfiguration.TypeIds));
+            this.Routes = Convert<Route>.ListToObservableCollection(Route.LoadFromCsv(Configuration.AppConfig.RoutesFileName, Configuration.SystemIds));
+            this.Products = Convert<Product>.ListToObservableCollection(Product.LoadFromCsv(Configuration.AppConfig.ProductsFileName, Configuration.TypeIds));
+            this.ProductsFilterList = this.CreateFilterList(this.Products.Select(p => p.Name).ToList());
 
             this.MarketItems = new MarketItems();
             var marketItems = MarketItem.Load(this.Routes.ToList(), this.Products.ToList());
@@ -41,10 +42,17 @@
             }
         }
 
+        public void SaveData()
+        {
+            Route.SaveToCsv(Path.Combine(Configuration.AppConfig.ActualConfigFolder, "Routes.csv"), this.Routes.ToList());
+            Product.SaveToCsv(Path.Combine(Configuration.AppConfig.ActualConfigFolder, "Products.csv"), this.Products.ToList());
+        }
+
         public void DownloadMarketData()
         {
             var marketData = EveMarketerApi.LoadMarketData(this.Routes.ToList(), this.Products.ToList(), Configuration.AppConfig.EveMarketerApiUri);
             MarketItem.LoadMarketData(this.MarketItems, marketData);
+            MarketItems.LastUpdated = DateTime.Now;
         }
 
         private void ProductsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -71,5 +79,50 @@
                 MarketItem.RemoveProducts(this.MarketItems, this.Routes.ToList(), oldItems);
             }
         }
+
+        private Dictionary<string, List<string>> CreateFilterList(List<string> list)
+        {
+            var filterList = new Dictionary<string, List<string>>();
+            foreach (var item in list)
+            {
+                AddOneWord(item);
+            }
+
+            return filterList;
+
+            void AddOneWord(string word)
+            {
+                for (int i = 0; i < word.Length; i++)
+                {
+                    for (int j = 1; j <= word.Substring(i).Length; j++)
+                    {
+                        CheckOneWord(word, i, j);
+                    }
+                }
+            }
+
+            void CheckOneWord(string word, int startIndex, int length)
+            {
+                if (string.IsNullOrEmpty(word))
+                {
+                    return;
+                }
+
+                var checkKey = word.Substring(startIndex, length).ToLower();
+                List<string> seznam;
+                if (filterList.TryGetValue(checkKey, out seznam))
+                {
+                    if (seznam != null && !seznam.Contains(word))
+                    {
+                        seznam.Add(word);
+                    }
+                }
+                else
+                {
+                    seznam = new List<string>() { word };
+                    filterList.Add(checkKey, seznam);
+                }
+            }
+        }  
     }
 }

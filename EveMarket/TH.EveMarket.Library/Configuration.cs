@@ -1,6 +1,7 @@
 ﻿namespace TH.EveMarket.Library
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using TH.EveMarket.Library.Data;
     using TH.EveMarket.Library.Utility;
@@ -9,6 +10,8 @@
     {
         public static AppConfig AppConfig { get; set; } = new AppConfig();
         public static MarketConfiguration MarketConfiguration { get; set; } = new MarketConfiguration();
+        public static Dictionary<string, long> TypeIds { get; set; } = new Dictionary<string, long>();
+        public static Dictionary<string, long> SystemIds { get; set; } = new Dictionary<string, long>();
 
         static Configuration()
         {
@@ -36,18 +39,18 @@
                 AppConfig.ActualConfigFolder = Path.GetDirectoryName(exePath);
             }
 
-            var marketConfigPath = Path.Combine(AppConfig.ActualConfigFolder, "MarketConfig.xml");
-            if (File.Exists(marketConfigPath))
+            var marketSettingsPath = Path.Combine(AppConfig.ActualConfigFolder, "MarketConfig.xml");
+            if (File.Exists(marketSettingsPath))
             {
-                Files<MarketConfiguration>.LoadXml(marketConfigPath);
+                MarketConfiguration = Files<MarketConfiguration>.LoadXml(marketSettingsPath);
             }
             else
             {
-                Files<MarketConfiguration>.SaveXml(marketConfigPath, MarketConfiguration);
+                Files<MarketConfiguration>.SaveXml(marketSettingsPath, MarketConfiguration);
             }
 
-            MarketConfiguration.SystemIds = SolarSystem.LoadFromCsv(Path.Combine(AppConfig.ActualConfigFolder, AppConfig.SystemIdsFileName));
-            MarketConfiguration.TypeIds = TypeIds.GetTypeIds();
+            SystemIds = SolarSystem.LoadFromCsv(Path.Combine(AppConfig.ActualConfigFolder, AppConfig.SystemIdsFileName));
+            TypeIds = Utility.TypeIds.GetTypeIds();
         }
 
         public static void CreateAppDataFolder(string folderPath)

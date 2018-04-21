@@ -1,7 +1,10 @@
 ﻿namespace TH.EveMarket.Library.Data
 {
+    using System;
     using System.Collections.Generic;
     using TH.EveMarket.Library.Utility;
+
+    [Serializable]
     public class SolarSystem
     {
         public long Id { get; set; }

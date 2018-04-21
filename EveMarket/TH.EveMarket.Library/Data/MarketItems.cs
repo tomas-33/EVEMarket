@@ -11,10 +11,5 @@
     public class MarketItems : ObservableCollection<MarketItem>
     {
         public DateTime LastUpdated { get; set; }
-
-        public static void Save()
-        {
-
-        }
     }
 }

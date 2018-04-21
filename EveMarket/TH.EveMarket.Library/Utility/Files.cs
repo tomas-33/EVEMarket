@@ -4,6 +4,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Runtime.Serialization.Formatters.Binary;
     using System.Text;
     using System.Threading.Tasks;
     using System.Xml.Serialization;
@@ -28,6 +29,27 @@
             using (Stream s = File.Open(path, FileMode.Create))
             {
                 xs.Serialize(s, instanceToSave);
+            }
+        }
+
+        public static T LoadBinary(string path)
+        {
+            var bf = new BinaryFormatter();
+            T result;
+            using (Stream sr = File.Open(path, FileMode.Open))
+            {
+                result = (T)bf.Deserialize(sr);
+            }
+
+            return result;
+        }
+
+        public static void SaveBinary(string path, T instanceToSave)
+        {
+            var bf = new BinaryFormatter();
+            using (Stream s = File.Open(path, FileMode.Create))
+            {
+                bf.Serialize(s, instanceToSave);
             }
         }
     }

@@ -33,8 +33,16 @@
                     {
                         for (int i = 0; i < item.Length; i++)
                         {
-                            sw.Write($"{item[i]};");
+                            if (i == item.Length - 1)
+                            {
+                                sw.Write($"{item[i]}");
+                            }
+                            else
+                            {
+                                sw.Write($"{item[i]};");
+                            }
                         }
+
                         sw.WriteLine();
                     }
                 }
