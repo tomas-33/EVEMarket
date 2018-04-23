@@ -146,6 +146,8 @@
             }
         }
 
+        public bool IsWorthIt => this._profitPercent > 0.05M;
+
         #endregion // Properties
 
         public static List<MarketItem> Load(List<Route> routes, List<Product> products)
@@ -173,7 +175,7 @@
                 item.To = marketData.Where(m => m.TypeId == item.Product.Id && m.SystemId == item.Route.ToSystem.Id).First();
                 item.Tax = Configuration.MarketConfiguration.TransactionTaxPercent * item.To.Sell.Min;
                 item.Fee = Configuration.MarketConfiguration.BrokersFeePercent * item.To.Sell.Min;
-                item.Profit = item.To.Sell.Min + item.TaxPlusFee - item.To.Sell.Min;
+                item.Profit = item.From.Sell.Min + item.TaxPlusFee - item.To.Sell.Min;
                 item.ProfitPercent = (item.TaxPlusFee + item.To.Sell.Min) != 0 ? item.Profit / (item.TaxPlusFee + item.To.Sell.Min) : 0;
             }
         }

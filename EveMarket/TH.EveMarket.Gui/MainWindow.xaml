@@ -37,7 +37,20 @@
                             </ComboBox.ItemTemplate>
                         </ComboBox>
 
-                        <DataGrid Grid.Row="1" Name="MarketDataDataGrid" AutoGenerateColumns="False" IsReadOnly="True" >
+                        <DataGrid Grid.Row="1" Name="MarketDataDataGrid" AutoGenerateColumns="False" IsReadOnly="True" MouseDoubleClick="MarketDataDataGrid_MouseDoubleClick" >
+                            
+                            <DataGrid.RowStyle>
+                                <Style TargetType="DataGridRow">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsWorthIt}" Value="true" >
+                                            <Setter Property="Background" Value="LightGreen"></Setter>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsWorthIt}"  Value="false">
+                                            <Setter Property="Background" Value="Tomato"></Setter>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </DataGrid.RowStyle>
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Product" Width="100" Binding="{Binding Product.Name}" />
                                 <DataGridTextColumn Header="Source Sell" Width="100" Binding="{Binding From.Sell.Min, StringFormat=N}" />
@@ -46,7 +59,7 @@
                                 <DataGridTextColumn Header="Profit" Width="100" Binding="{Binding Profit, StringFormat=N}" />
                             </DataGrid.Columns>
                         </DataGrid>
-                        
+
                         <StatusBar Grid.Row="2">
                             <StatusBarItem>
                                 <TextBlock Name="LastUpdatedTextBlock" Text="{Binding LastUpdated}" />
@@ -56,7 +69,7 @@
 
                     </Grid>
                 </TabItem>
-                
+
                 <TabItem Header="Products">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -96,7 +109,7 @@
                         </DataGrid>
                     </Grid>
                 </TabItem>
-                
+
             </TabControl>
         </DockPanel>
     </Grid>

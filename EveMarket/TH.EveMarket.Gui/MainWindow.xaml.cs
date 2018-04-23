@@ -28,14 +28,6 @@
         {
             InitializeComponent();
             this._market = new Market();
-
-            this.RoutesComboBox.ItemsSource = this._market.Routes;
-
-            this.MarketDataDataGrid.ItemsSource = this._market.MarketItems.Where(i => i.Route == (this.RoutesComboBox.SelectedItem as Route));
-            this.RoutesComboBox.SelectedIndex = 0;
-
-            this.ProductsDataGrid.ItemsSource = this._market.Products;
-            this.RoutesDataGrid.ItemsSource = this._market.Routes;
         }
 
         private void SetSources()
@@ -77,6 +69,14 @@
             this._market.LoadData();
             this.SetSources();
             this.LastUpdatedTextBlock.Text = $"Last Updated: {this._market.MarketItems.LastUpdated}";
+        }
+
+        private void MarketDataDataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            DataGridRow row = ItemsControl.ContainerFromElement((DataGrid)sender, e.OriginalSource as DependencyObject) as DataGridRow;
+            if (row == null) return;
+
+            Clipboard.SetText((row.Item as MarketItem).Product.Name);
         }
     }
 }
